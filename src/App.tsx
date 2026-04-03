@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Candy, Bomb as BombIcon, Coins, Trophy, User as UserIcon, History, Shield, Gift, Volume2, Info, LogOut, Loader2, PlayCircle } from 'lucide-react'
+import { Candy, Bomb as BombIcon, Coins, Trophy, User as UserIcon, History, Shield, Gift, Volume2, Info, LogOut, Loader2, PlayCircle, Settings } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameState } from './hooks/useGameState'
 import { useAuth } from './hooks/useAuth'
