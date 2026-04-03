@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, MapPin, Save, Gift } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, User, MapPin, Save } from 'lucide-react';
+import { translations, Language } from '../lib/i18n';
 
 interface ProfileModalProps {
   profile: any;
   onClose: () => void;
   onUpdate: (updates: any) => Promise<any>;
+  lang: Language;
 }
 
-export const ProfileModal = ({ profile, onClose, onUpdate }: ProfileModalProps) => {
+export const ProfileModal = ({ profile, onClose, onUpdate, lang }: ProfileModalProps) => {
+  const t = translations[lang];
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [address, setAddress] = useState(profile?.address || '');
   const [isSaving, setIsSaving] = useState(false);
@@ -41,14 +44,14 @@ export const ProfileModal = ({ profile, onClose, onUpdate }: ProfileModalProps) 
             <User className="w-10 h-10 text-white" />
           </div>
           <div className="text-center">
-            <h2 className="text-2xl font-black italic tracking-tighter">USER PROFILE</h2>
+            <h2 className="text-2xl font-black italic tracking-tighter uppercase">{t.profile}</h2>
             <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{profile?.email}</p>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name (Ad Soyad)</label>
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.fullName}</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
@@ -56,13 +59,13 @@ export const ProfileModal = ({ profile, onClose, onUpdate }: ProfileModalProps) 
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-candy-primary transition-colors"
-                placeholder="John Doe"
+                placeholder={lang === 'tr' ? 'Ad Soyad giriniz...' : 'Enter your full name...'}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Shipping Address (Hediye Gönderimi İçin)</label>
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.address}</label>
             <div className="relative">
               <MapPin className="absolute left-4 top-3 w-4 h-4 text-gray-500" />
               <textarea
@@ -70,7 +73,7 @@ export const ProfileModal = ({ profile, onClose, onUpdate }: ProfileModalProps) 
                 onChange={(e) => setAddress(e.target.value)}
                 rows={3}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-candy-primary transition-colors resize-none"
-                placeholder="Your detailed address..."
+                placeholder={lang === 'tr' ? 'Detaylı adresinizi giriniz...' : 'Your detailed address...'}
               />
             </div>
           </div>
@@ -82,10 +85,10 @@ export const ProfileModal = ({ profile, onClose, onUpdate }: ProfileModalProps) 
               className="glass-button w-full flex items-center justify-center gap-2"
             >
               <Save className="w-4 h-4" />
-              {isSaving ? 'SAVING...' : 'SAVE CHANGES'}
+              {isSaving ? t.loading : t.save}
             </button>
             <p className="text-[9px] text-center text-gray-500 italic">
-               Physical rewards are sent based on monthly ranking. Ensure your address is correct.
+               {t.rewardsNotice}
             </p>
           </div>
         </div>

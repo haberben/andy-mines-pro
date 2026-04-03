@@ -3,7 +3,7 @@ import { GameStatus, Tile } from '../types/game';
 import { generateTiles, calculateMultiplier } from '../logic/mines';
 import { supabase } from '../lib/supabase';
 
-export const useGameState = (userId?: string, initialBalance: number = 0) => {
+export const useGameState = (userId?: string, initialBalance: number = 1000) => {
   const [balance, setBalance] = useState(initialBalance);
   const [status, setStatus] = useState<GameStatus>('idle');
   const [tiles, setTiles] = useState<Tile[]>([]);

@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Lock, User, AtSign, Loader2, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Lock, Loader2, ArrowRight, AtSign } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { translations, Language } from '../lib/i18n';
 
 interface AuthModalProps {
   onClose: () => void;
+  lang: Language;
 }
 
-export const AuthModal = ({ onClose }: AuthModalProps) => {
+export const AuthModal = ({ onClose, lang }: AuthModalProps) => {
+  const t = translations[lang];
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,11 +54,11 @@ export const AuthModal = ({ onClose }: AuthModalProps) => {
            <div className="w-16 h-16 bg-candy-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-candy-primary/30">
               <Lock className="w-8 h-8 text-candy-primary" />
            </div>
-           <h2 className="text-2xl font-black italic italic tracking-tighter">
-             {mode === 'login' ? 'WELCOME BACK' : 'JOIN THE CLUB'}
+           <h2 className="text-2xl font-black italic tracking-tighter uppercase">
+             {mode === 'login' ? t.login : t.signup}
            </h2>
            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">
-             Your progression starts here
+             {lang === 'tr' ? 'İlerlemen burada başlıyor' : 'Your progression starts here'}
            </p>
         </div>
 
@@ -67,7 +70,7 @@ export const AuthModal = ({ onClose }: AuthModalProps) => {
            )}
 
            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Email Address</label>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">{t.email}</label>
               <div className="relative">
                 <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <input
@@ -82,7 +85,7 @@ export const AuthModal = ({ onClose }: AuthModalProps) => {
            </div>
 
            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Password</label>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">{t.password}</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                 <input
@@ -103,7 +106,7 @@ export const AuthModal = ({ onClose }: AuthModalProps) => {
            >
              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                <>
-                 <span>{mode === 'login' ? 'SIGN IN' : 'SIGN UP'}</span>
+                 <span className="font-black uppercase tracking-widest">{mode === 'login' ? t.login : t.signup}</span>
                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                </>
              )}
@@ -115,7 +118,7 @@ export const AuthModal = ({ onClose }: AuthModalProps) => {
              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
              className="text-[10px] font-black text-gray-500 hover:text-candy-primary uppercase tracking-widest transition-colors"
            >
-             {mode === 'login' ? "Don't have an account? Create one" : "Already have an account? Sign In"}
+             {mode === 'login' ? t.dontHaveAccount : t.alreadyHaveAccount}
            </button>
         </div>
       </motion.div>
