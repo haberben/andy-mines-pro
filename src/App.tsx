@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Candy, Bomb as BombIcon, Coins, Trophy, User as UserIcon, History, Shield, Gift, Volume2, Info, LogOut, Loader2, PlayCircle, Settings, Languages } from 'lucide-react'
+import { Candy, Bomb as BombIcon, Coins, Trophy, User as UserIcon, History, Shield, Gift, Volume2, VolumeX, Info, LogOut, Loader2, PlayCircle, Settings, Languages } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGameState } from './hooks/useGameState'
 import { useAuth } from './hooks/useAuth'
+import { useAudio } from './hooks/useAudio'
 import { ProfileModal } from './components/ProfileModal'
 import { AuthModal } from './components/AuthModal'
 import { supabase } from './lib/supabase'
@@ -10,6 +11,7 @@ import { translations, Language } from './lib/i18n'
 
 function App() {
   const { user, profile, loading: authLoading, updateProfile } = useAuth()
+  const { audioEnabled, toggleAudio, playSound } = useAudio()
   const [lang, setLang] = useState<Language>('tr')
   const t = translations[lang]
 
@@ -48,11 +50,17 @@ function App() {
     fetchLeaderboard()
   }, [status])
 
+  useEffect(() => {
+    if (status === 'win') playSound('win')
+    if (status === 'loss') playSound('loss')
+  }, [status])
+
   const handleWatchAd = async () => {
     setIsWatchingAd(true)
     setTimeout(async () => {
       await rewardAd(100)
       setIsWatchingAd(false)
+      playSound('adReward')
       alert(lang === 'tr' ? '100 Candy Coin kazandınız!' : 'You earned 100 Candy Coins!')
     }, 3000)
   }
@@ -66,6 +74,7 @@ function App() {
       alert(t.insufficientBalance)
       return
     }
+    playSound('bet')
     await startGame()
   }
 
@@ -112,6 +121,13 @@ function App() {
           >
             <Languages className="w-4 h-4 text-candy-gold" />
             {lang === 'tr' ? 'ENGLISH' : 'TÜRKÇE'}
+          </button>
+
+          <button 
+            onClick={toggleAudio}
+            className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all"
+          >
+            {audioEnabled ? <Volume2 className="w-5 h-5 text-candy-gold" /> : <VolumeX className="w-5 h-5 text-gray-500" />}
           </button>
 
           <motion.div 
@@ -291,7 +307,10 @@ function App() {
                      key={tile.id}
                      whileHover={!tile.isRevealed && status === 'playing' ? { scale: 1.05, y: -5 } : {}}
                      whileTap={!tile.isRevealed && status === 'playing' ? { scale: 0.9 } : {}}
-                     onClick={() => revealTile(tile.id)}
+                     onClick={() => {
+                        playSound('reveal')
+                        revealTile(tile.id)
+                     }}
                      disabled={tile.isRevealed || status !== 'playing'}
                      className={`relative rounded-2xl transition-all duration-300 preserve-3d shadow-[0_10px_20px_rgba(0,0,0,0.4)] aspect-square flex items-center justify-center border-b-4 ${
                        tile.isRevealed 
