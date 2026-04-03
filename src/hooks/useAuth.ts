@@ -8,6 +8,11 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Emergency timeout to prevent infinite loading stall
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
     // Check active sessions and sets user
     const getSession = async () => {
       try {
@@ -20,6 +25,7 @@ export const useAuth = () => {
         console.error('Error getting session:', e);
       } finally {
         setLoading(false);
+        clearTimeout(timeout);
       }
     };
 
@@ -40,11 +46,13 @@ export const useAuth = () => {
           console.error('Error on auth change:', e);
         } finally {
           setLoading(false);
+          clearTimeout(timeout);
         }
       }
     );
 
     return () => {
+      clearTimeout(timeout);
       authListener.subscription.unsubscribe();
     };
   }, []);
