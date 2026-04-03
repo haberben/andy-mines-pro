@@ -2,8 +2,9 @@ import { useState, useCallback, useEffect } from 'react';
 import { GameStatus, Tile } from '../types/game';
 import { generateTiles, calculateMultiplier } from '../logic/mines';
 import { supabase } from '../lib/supabase';
+import { Language } from '../lib/i18n';
 
-export const useGameState = (userId?: string, initialBalance: number = 1000) => {
+export const useGameState = (userId: string | undefined, initialBalance: number = 1000, lang: Language = 'tr') => {
   const [balance, setBalance] = useState(initialBalance);
   const [status, setStatus] = useState<GameStatus>('idle');
   const [tiles, setTiles] = useState<Tile[]>([]);
@@ -29,42 +30,39 @@ export const useGameState = (userId?: string, initialBalance: number = 1000) => 
   }, [userId]);
 
   const updateServerBalance = async (newBalance: number) => {
-    if (!userId) {
-      setBalance(newBalance);
-      return;
-    }
-    
-    // Optimistic update
+    // Optimistic update - immediate reflected in UI
     setBalance(newBalance);
     
-    const { error } = await supabase
+    if (!userId) return;
+    
+    // Background update - don't await this for UI smoothness
+    supabase
       .from('profiles')
       .update({ balance: newBalance })
-      .eq('id', userId);
-      
-    if (error) {
-      console.error('Balance sync error:', error);
-      // Fallback or alert
-    }
+      .eq('id', userId)
+      .then(({ error }: { error: any }) => {
+        if (error) console.error('Balance sync error:', error);
+      });
   };
 
-  const startGame = useCallback(async () => {
+  const startGame = useCallback(() => {
     if (balance < betAmount) {
-      alert('Insufficient balance!');
+      alert(lang === 'tr' ? 'Yetersiz bakiye!' : 'Insufficient balance!');
       return;
     }
     
-    await updateServerBalance(balance - betAmount);
+    // Animate and start immediately
+    updateServerBalance(balance - betAmount);
     setTiles(generateTiles(minesCount));
     setRevealedSafeTiles(0);
     setMultiplier(1.0);
     setStatus('playing');
-  }, [balance, betAmount, minesCount, userId]);
+  }, [balance, betAmount, minesCount, userId, lang]);
 
   const revealTile = useCallback((tileId: number) => {
     if (status !== 'playing') return;
 
-    setTiles(prev => prev.map(tile => {
+    setTiles((prev: Tile[]) => prev.map((tile: Tile) => {
       if (tile.id === tileId && !tile.isRevealed) {
         if (tile.isMine) {
           setStatus('loss');

@@ -27,7 +27,7 @@ function App() {
     cashout,
     revealedSafeTiles,
     rewardAd
-  } = useGameState(user?.id, profile?.balance || 1000)
+  } = useGameState(user?.id, profile?.balance || 1000, lang)
 
   const [showProfile, setShowProfile] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
@@ -86,63 +86,70 @@ function App() {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full glass-card !rounded-none !border-t-0 p-4 flex justify-between items-center shadow-xl backdrop-blur-xl transition-all">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-candy-primary to-candy-secondary rounded-xl shadow-lg shadow-candy-primary/20">
-            <Candy className="w-6 h-6 text-white" />
-          </div>
+      <header className="sticky top-0 z-50 w-full bg-black/60 backdrop-blur-2xl border-b border-candy-gold/20 p-4 flex justify-between items-center shadow-2xl">
+        <div className="flex items-center gap-4">
+          <motion.div 
+            whileHover={{ rotate: 180 }}
+            className="p-3 bg-gradient-to-br from-candy-gold to-candy-gold-dark rounded-2xl shadow-lg ring-2 ring-candy-gold/30"
+          >
+            <Candy className="w-7 h-7 text-black" />
+          </motion.div>
           <div>
-            <h1 className="text-lg font-black tracking-tighter leading-none italic uppercase">
+            <h1 className="text-2xl font-black tracking-tighter leading-none italic uppercase gold-text">
               {t.title}
             </h1>
-            <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t.serverLive}</span>
+            <div className="flex items-center gap-1.5 pt-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{t.serverLive}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          {/* Language Switcher */}
+        <div className="flex items-center gap-3 sm:gap-6">
           <button 
             onClick={() => setLang(lang === 'tr' ? 'en' : 'tr')}
-            className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 transition-all text-[10px] font-black uppercase tracking-widest"
+            className="hidden sm:flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl border border-white/10 transition-all text-[10px] font-black uppercase tracking-widest"
           >
-            <Languages className="w-3 h-3 text-candy-primary" />
-            {lang === 'tr' ? 'EN' : 'TR'}
+            <Languages className="w-4 h-4 text-candy-gold" />
+            {lang === 'tr' ? 'ENGLISH' : 'TÜRKÇE'}
           </button>
 
           <motion.div 
             key={balance}
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            className="flex items-center gap-3 bg-black/40 px-4 py-2.5 rounded-2xl border border-white/10 shadow-inner"
+            initial={{ scale: 1.2, color: '#FFD700' }}
+            animate={{ scale: 1, color: '#FFF' }}
+            className="flex items-center gap-3 bg-gradient-to-b from-white/10 to-transparent px-5 py-3 rounded-2xl border border-candy-gold/30 shadow-[inset_0_0_20px_rgba(255,215,0,0.1)]"
           >
-            <img src="/images/COIN.png" alt="coin" className="w-5 h-5 object-contain" />
-            <span className="font-black text-lg tabular-nums tracking-tight">{balance.toLocaleString()}</span>
+            <div className="relative">
+              <img src="/images/COIN.png" alt="coin" className="w-7 h-7 object-contain drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]" />
+              <motion.div 
+                animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-candy-gold/40 blur-md rounded-full"
+              />
+            </div>
+            <span className="font-black text-xl tabular-nums tracking-tighter gold-text">{balance.toLocaleString()}</span>
             <button 
               onClick={handleWatchAd}
               disabled={isWatchingAd}
-              className="ml-1 p-1 bg-candy-primary/20 hover:bg-candy-primary/40 rounded-lg text-candy-primary transition-colors disabled:opacity-50"
+              className="ml-2 p-1.5 bg-candy-gold/20 hover:bg-candy-gold/40 rounded-xl text-candy-gold transition-all disabled:opacity-50"
             >
-              {isWatchingAd ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
+              {isWatchingAd ? <Loader2 className="w-5 h-5 animate-spin" /> : <Gift className="w-5 h-5" />}
             </button>
           </motion.div>
           
           {user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
                <button 
                 onClick={() => setShowProfile(true)}
-                className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all active:scale-90 flex items-center gap-2 group"
+                className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all active:scale-95 group relative overflow-hidden"
               >
-                <UserIcon className="w-6 h-6" />
-                <span className="hidden sm:inline font-bold text-xs group-hover:text-candy-primary transition-colors">
-                  {profile?.full_name?.split(' ')[0] || t.guest}
-                </span>
+                <UserIcon className="w-6 h-6 text-candy-gold" />
+                <div className="absolute inset-0 bg-gold-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <button 
                 onClick={handleSignOut}
-                className="p-2 sm:p-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-2xl transition-all"
+                className="p-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-2xl transition-all"
               >
                 <LogOut className="w-6 h-6 text-red-400" />
               </button>
@@ -150,7 +157,7 @@ function App() {
           ) : (
             <button 
               onClick={() => setShowAuth(true)}
-              className="glass-button !py-2 !px-6 text-xs shadow-none border-white/10"
+              className="glass-button !py-3 !px-8 text-xs shadow-xl !from-candy-gold !to-candy-gold-dark !text-black"
             >
               {t.signIn}
             </button>
@@ -160,16 +167,16 @@ function App() {
 
       <main className="flex-1 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[380px,1fr] gap-6 p-4 sm:p-8">
         {/* Betting Terminal */}
-        <aside className="flex flex-col gap-4">
-           <div className="glass-card p-6 flex flex-col gap-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
-              <Settings className="w-20 h-20 rotate-12" />
+        <aside className="flex flex-col gap-6">
+           <div className="glass-card p-8 flex flex-col gap-8 relative overflow-hidden group border-candy-gold/30">
+            <div className="absolute -top-10 -right-10 p-4 opacity-5 group-hover:opacity-10 transition-opacity rotate-12">
+              <Trophy className="w-40 h-40 text-candy-gold" />
             </div>
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.betAmount}</label>
-                <span className="text-[10px] font-bold text-candy-primary px-2 py-0.5 bg-candy-primary/10 rounded-full">{t.minBet}</span>
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{t.betAmount}</label>
+                <span className="text-[10px] font-black text-candy-gold px-3 py-1 bg-candy-gold/10 rounded-full border border-candy-gold/20">{t.minBet}</span>
               </div>
               <div className="relative group/input">
                 <input
@@ -177,21 +184,21 @@ function App() {
                   value={betAmount}
                   onChange={(e) => setBetAmount(Number(e.target.value))}
                   disabled={status === 'playing'}
-                  className="w-full bg-black/40 border-2 border-white/5 group-focus-within/input:border-candy-primary/50 transition-all rounded-2xl px-6 py-4 text-2xl font-black focus:outline-none disabled:opacity-50"
+                  className="w-full bg-black/60 border-2 border-white/10 group-focus-within/input:border-candy-gold transition-all rounded-3xl px-8 py-5 text-3xl font-black focus:outline-none disabled:opacity-50 gold-text"
                   placeholder="0.00"
                 />
-                <img src="/images/COIN.png" alt="coin" className="absolute right-6 top-1/2 -translate-y-1/2 w-8 h-8 object-contain opacity-30 group-focus-within/input:opacity-100 transition-opacity" />
+                <img src="/images/COIN.png" alt="coin" className="absolute right-8 top-1/2 -translate-y-1/2 w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]" />
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <button 
-                  onClick={() => setBetAmount(Math.max(10, betAmount / 2))}
-                  className="p-2 bg-white/5 hover:bg-white/10 rounded-xl font-bold transition-all"
+                  onClick={() => setBetAmount(Math.max(10, Math.floor(betAmount / 2)))}
+                  className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl font-black text-xs tracking-widest transition-all border border-white/5"
                 >
                   1/2
                 </button>
                 <button 
                   onClick={() => setBetAmount(betAmount * 2)}
-                  className="p-2 bg-white/5 hover:bg-white/10 rounded-xl font-bold transition-all"
+                  className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl font-black text-xs tracking-widest transition-all border border-white/5"
                 >
                   2X
                 </button>
@@ -200,13 +207,13 @@ function App() {
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.minesCount}</label>
-                <div className="flex gap-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">{t.minesCount}</label>
+                <div className="flex flex-wrap gap-2 justify-end">
                    { [1, 3, 5, 24].map((n) => (
                     <button
                       key={n}
                       onClick={() => setMinesCount(n)}
-                      className={`w-10 h-10 rounded-xl font-black text-sm border-2 transition-all flex items-center justify-center ${minesCount === n ? 'border-candy-primary bg-candy-primary/20 text-white shadow-lg shadow-candy-primary/20' : 'border-white/5 bg-white/5 text-gray-500 hover:text-white'}`}
+                      className={`w-11 h-11 rounded-2xl font-black text-sm border-2 transition-all flex items-center justify-center ${minesCount === n ? 'border-candy-gold bg-candy-gold/20 text-candy-gold shadow-[0_0_15px_rgba(255,215,0,0.2)]' : 'border-white/5 bg-white/5 text-gray-500 hover:text-white'}`}
                     >
                       {n}
                     </button>
@@ -216,23 +223,26 @@ function App() {
             </div>
             
             {status === 'playing' ? (
-              <div className="space-y-4">
-                <button 
-                  onClick={cashout}
-                  disabled={revealedSafeTiles === 0}
-                  className="glass-button w-full !bg-green-500/80 hover:!bg-green-500 shadow-xl shadow-green-500/20 disabled:opacity-50 py-5 text-xl flex flex-col items-center gap-1"
-                >
-                  <span className="text-[10px] uppercase font-black tracking-[0.2em] opacity-80">{t.cashout}</span>
-                  <span className="font-black">{(betAmount * multiplier).toFixed(2)}</span>
-                </button>
-              </div>
+              <motion.button 
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={cashout}
+                disabled={revealedSafeTiles === 0}
+                className="glass-button w-full !from-green-600 !to-green-400 shadow-[0_0_30px_rgba(34,197,94,0.3)] disabled:opacity-50 py-6 flex flex-col items-center gap-1 border-b-4 border-green-800"
+              >
+                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-white/80">{t.cashout}</span>
+                <span className="text-3xl font-black italic tracking-tighter tabular-nums">{(betAmount * multiplier).toFixed(2)} 💎</span>
+              </motion.button>
             ) : (
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleStartGame}
-                className="glass-button w-full shadow-2xl shadow-candy-primary/20 py-5 text-xl font-black tracking-tight"
+                className="glass-button w-full shadow-[0_0_40px_rgba(255,61,113,0.3)] py-6 text-2xl font-black tracking-tighter italic border-b-4 border-candy-secondary/50"
               >
                 {t.betNow}
-              </button>
+              </motion.button>
             )}
           </div>
 
@@ -274,39 +284,47 @@ function App() {
               </AnimatePresence>
             </div>
 
-            <div className="candy-grid grid-cols-5 grid-rows-5 w-full h-full relative z-0">
+            <div className="candy-grid grid-cols-5 grid-rows-5 w-full h-full relative z-0 p-4">
                {tiles.length > 0 ? (
                  tiles.map((tile) => (
                    <motion.button
                      key={tile.id}
-                     whileHover={!tile.isRevealed && status === 'playing' ? { scale: 1.05 } : {}}
-                     whileTap={!tile.isRevealed && status === 'playing' ? { scale: 0.95 } : {}}
+                     whileHover={!tile.isRevealed && status === 'playing' ? { scale: 1.05, y: -5 } : {}}
+                     whileTap={!tile.isRevealed && status === 'playing' ? { scale: 0.9 } : {}}
                      onClick={() => revealTile(tile.id)}
                      disabled={tile.isRevealed || status !== 'playing'}
-                     className={`relative rounded-xl overflow-hidden transition-all duration-500 preserve-3d shadow-xl aspect-square flex items-center justify-center border-2 ${
+                     className={`relative rounded-2xl transition-all duration-300 preserve-3d shadow-[0_10px_20px_rgba(0,0,0,0.4)] aspect-square flex items-center justify-center border-b-4 ${
                        tile.isRevealed 
                        ? tile.isMine 
-                         ? 'bg-red-500/20 border-red-500 shadow-red-500/20' 
-                         : 'bg-green-500/20 border-green-500 shadow-green-500/20'
-                       : 'bg-white/5 border-white/10 hover:border-white/30 cursor-pointer active:bg-white/10'
+                         ? 'bg-red-500/20 border-red-900 shadow-red-500/20' 
+                         : 'bg-gradient-to-br from-green-400 to-green-600 border-green-800 shadow-[0_0_20px_rgba(34,197,94,0.4)]'
+                       : 'bg-gradient-to-br from-white/10 to-transparent border-white/10 hover:border-candy-gold/50 cursor-pointer'
                      }`}
                    >
                      {!tile.isRevealed && (
-                       <div className="w-full h-full p-2 flex items-center justify-center relative">
-                         <div className="w-full h-full decoration-candy mask-squircle bg-gradient-to-br from-white/10 to-transparent rounded-lg" />
-                         <Candy className="absolute w-3 h-3 text-white/5 group-hover:text-white/20" />
+                       <div className="w-full h-full p-2 flex items-center justify-center relative group">
+                         <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent rounded-xl" />
+                         <Candy className="absolute w-6 h-6 text-candy-gold/20 group-hover:text-candy-gold group-hover:rotate-12 transition-all duration-300" />
                        </div>
                      )}
                      {tile.isRevealed && (
                        <motion.div
-                         initial={{ scale: 0, rotate: -45 }}
-                         animate={{ scale: 1, rotate: 0 }}
-                         className="w-full h-full flex items-center justify-center p-2"
+                         initial={{ scale: 0, rotate: -180, filter: 'brightness(2)' }}
+                         animate={{ scale: 1, rotate: 0, filter: 'brightness(1)' }}
+                         transition={{ type: 'spring', damping: 12 }}
+                         className="w-full h-full flex items-center justify-center p-1"
                        >
                          {tile.isMine ? (
-                           <img src="/images/BOMBA.png" alt="mine" className="w-[80%] h-[80%] object-contain drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                           <img src="/images/BOMBA.png" alt="mine" className="w-[85%] h-[85%] object-contain drop-shadow-[0_0_20px_rgba(239,68,68,0.8)]" />
                          ) : (
-                           <img src="/images/COIN.png" alt="coin" className="w-[85%] h-[85%] object-contain drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]" />
+                           <div className="relative w-full h-full flex items-center justify-center">
+                             <img src="/images/COIN.png" alt="coin" className="w-[90%] h-[90%] object-contain drop-shadow-[0_0_20px_rgba(255,215,0,0.8)]" />
+                             <motion.div 
+                               animate={{ opacity: [0, 1, 0], scale: [1, 1.5, 1] }}
+                               transition={{ duration: 1 }}
+                               className="absolute inset-0 bg-white/40 blur-xl rounded-full"
+                             />
+                           </div>
                          )}
                        </motion.div>
                      )}
@@ -316,7 +334,7 @@ function App() {
                  Array.from({ length: 25 }).map((_, i) => (
                    <div 
                      key={i} 
-                     className="bg-white/5 border-2 border-white/5 rounded-xl aspect-square flex items-center justify-center opacity-40 grayscale"
+                     className="bg-white/5 border-2 border-white/5 rounded-2xl aspect-square flex items-center justify-center opacity-40"
                    >
                       <Candy className="w-6 h-6 text-white/5" />
                    </div>

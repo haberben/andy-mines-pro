@@ -31,13 +31,33 @@ body {
 }
 
 .glass-card {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl;
+  @apply bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)];
 }
 
 .glass-button {
-  @apply bg-candy-primary/80 backdrop-blur-sm border border-white/20 text-white font-bold py-3 px-6 rounded-xl hover:bg-candy-primary transition-all active:scale-95;
+  @apply bg-gradient-to-r from-candy-primary to-candy-secondary text-white font-black py-4 px-8 rounded-2xl transition-all duration-300 active:scale-95 shadow-lg relative overflow-hidden;
+}
+
+.glass-button::after {
+  content: '';
+  @apply absolute inset-0 bg-gold-shimmer translate-x-[-100%];
+  animation: shimmer 3s infinite linear;
+}
+
+.jewel-box {
+  @apply relative overflow-hidden bg-gradient-to-br from-white/10 to-transparent border-t border-l border-white/20 rounded-2xl shadow-inner;
+}
+
+.gold-text {
+  @apply bg-gradient-to-b from-candy-gold-light via-candy-gold to-candy-gold-dark bg-clip-text text-transparent drop-shadow-md font-black;
 }
 
 .candy-grid {
-  @apply grid gap-2 sm:gap-3;
+  @apply grid gap-3 sm:gap-4;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
